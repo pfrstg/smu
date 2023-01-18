@@ -16,23 +16,13 @@
 set -e
 
 SMUDIR=$(dirname $0)
-ROOTDIR=$(cd ${SMUDIR}/..; pwd)
-VENV="${SMUDIR}/venv_smu_dev"
-
-if [ -z "${VIRTUAL_ENV}" -a -d "${VENV}" ]; then
-    echo "Activating virtual environment in ${VENV}"
-    source ${VENV}/bin/activate
-fi
 
 set -u
 
 for TESTFN in $(find $SMUDIR -maxdepth 3 -name '*_test.py')
 do
-    if [[ $TESTFN == *"$VENV"* ]]; then
-        continue
-    fi
     echo "Executing ${TESTFN}"
-    python $TESTFN
+    poetry run python $TESTFN
 done
 
 echo "ALL TESTS PASSED"
