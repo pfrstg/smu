@@ -14,12 +14,13 @@
 
 #!/bin/bash
 set -e
-set -x
 
-virtualenv -p python3 .
-source ./bin/activate
+SMUDIR=$(dirname $0)
 
-pip install -r smu/requirements.txt
+set -u
+
+cd ${SMUDIR}/..
+
 protoc --experimental_allow_proto3_optional smu/dataset.proto --python_out=.
 
-python -m smu.parser.smu_parser_test
+echo "REGENERATED dataset_pb2.py"
