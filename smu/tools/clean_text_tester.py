@@ -298,9 +298,9 @@ def main(unused_argv):
     total_result = total_result.add(result_complete)
 
   logging.info('Final result %s', total_result)
-  print('Processed %d', len(samples_files))
-  print('Standard errors %d / %d', total_result.cnt_standard_error, total_result.cnt_standard)
-  print('Complete errors %d / %d', total_result.cnt_complete_error, total_result.cnt_complete)
+  print(f'Processed {len(samples_files)}')
+  print(f'Standard errors {total_result.cnt_standard_error} / {total_result.cnt_standard}')
+  print(f'Complete errors {total_result.cnt_complete_error} / {total_result.cnt_complete}')
 
 
 if __name__ == '__main__':

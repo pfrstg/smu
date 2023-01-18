@@ -32,7 +32,7 @@
 #
 #bond_topo  1 of  1
  bond_topo  1    topo_id       79308                                                x06_c6h12.079308.002
- bond_topo  1    info          icm.S                                                x06_c6h12.079308.002
+ bond_topo  1    info          dcm.S                                                x06_c6h12.079308.002
  bond_topo  1    smiles_rdkit  C1CCCCC1                                             x06_c6h12.079308.002
  bond_topo  1    x_atoms       CCCCCC                                               x06_c6h12.079308.002
  bond_topo  1    h_atoms       222222                                               x06_c6h12.079308.002
