@@ -31,15 +31,12 @@ import copy
 import os
 
 from absl import logging
-from absl.testing import absltest
-from absl.testing import parameterized
+from absl.testing import absltest, parameterized
 from google.protobuf import text_format
 from tensorflow.io import gfile
 
-
 from smu import dataset_pb2
-from smu.parser import smu_parser_lib
-from smu.parser import smu_writer_lib
+from smu.parser import smu_parser_lib, smu_writer_lib
 
 MAIN_DAT_FILE = 'x07_sample.dat'
 SMU1_DAT_FILE = 'x01_sample.dat'

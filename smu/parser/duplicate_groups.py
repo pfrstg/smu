@@ -53,13 +53,10 @@ equivalent. Each line represents one connected component and has a list of space
 separated bond topology ids.
 """
 
-from absl import app
-from absl import flags
-from absl import logging
 import numpy as np
 import pandas as pd
 import scipy.sparse
-
+from absl import app, flags, logging
 from tensorflow.io import gfile
 
 flags.DEFINE_string(

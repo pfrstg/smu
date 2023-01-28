@@ -38,21 +38,15 @@ import csv
 import functools
 import itertools
 import logging as stdlogging
-import numpy as np
 
-from absl import app
-from absl import flags
-from absl import logging
 import apache_beam as beam
 import numpy as np
+from absl import app, flags, logging
 from tensorflow.io import gfile
 
 from smu import dataset_pb2
-from smu.geometry import bond_length_distribution
-from smu.geometry import topology_from_geom
-from smu.parser import smu_parser_lib
-from smu.parser import smu_utils_lib
-from smu.parser import smu_writer_lib
+from smu.geometry import bond_length_distribution, topology_from_geom
+from smu.parser import smu_parser_lib, smu_utils_lib, smu_writer_lib
 
 flags.DEFINE_string('input_stage1_dat_glob', None,
                     'Glob of stage1 dat files to read')

@@ -31,8 +31,9 @@
 
 import os
 
-from absl.testing import absltest
 import pandas as pd
+from absl.testing import absltest
+
 from smu.parser import duplicate_groups
 
 TESTDATA_PATH = os.path.join(

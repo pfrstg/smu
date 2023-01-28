@@ -30,13 +30,10 @@
 
 import os
 
-from absl import app
-from absl import flags
-from absl import logging
-
+from absl import app, flags, logging
 from tensorflow.io import gfile
-from smu.parser import smu_parser_lib
-from smu.parser import smu_writer_lib
+
+from smu.parser import smu_parser_lib, smu_writer_lib
 
 flags.DEFINE_string(
     'input_glob', None, 'Glob of .dat files to read. '

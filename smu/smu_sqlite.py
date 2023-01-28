@@ -39,14 +39,13 @@ import datetime
 import os
 import sqlite3
 
+import snappy
 from absl import logging
 from rdkit import Chem
 
 from smu import dataset_pb2
-from smu.geometry import topology_from_geom
-from smu.geometry import topology_molecule
+from smu.geometry import topology_from_geom, topology_molecule
 from smu.parser import smu_utils_lib
-import snappy
 
 # The name of this table is a hold over before we did a big rename of
 # Conformer to Molecule. The column that holds the protobuf is also called

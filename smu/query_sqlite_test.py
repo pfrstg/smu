@@ -32,8 +32,7 @@ import os
 
 from absl.testing import absltest
 
-from smu import dataset_pb2
-from smu import query_sqlite
+from smu import dataset_pb2, query_sqlite
 from smu.geometry import bond_length_distribution
 
 TESTDATA_PATH = os.path.join(

@@ -44,13 +44,12 @@ found smiles.
 """
 
 from typing import List
-from absl import app
-from absl import flags
-from absl import logging
-import pandas as pd
-from rdkit import Chem
 
+import pandas as pd
+from absl import app, flags, logging
+from rdkit import Chem
 from tensorflow import gfile
+
 # from tensorflow.io import gfile
 
 FLAGS = flags.FLAGS

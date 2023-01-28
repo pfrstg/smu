@@ -36,19 +36,13 @@ import os.path
 import random
 import sys
 
-from absl import app
-from absl import flags
-from absl import logging
+from absl import app, flags, logging
 from google.protobuf import text_format
 from rdkit import Chem
 
-from smu import dataset_pb2
-from smu import smu_sqlite
-from smu.geometry import bond_length_distribution
-from smu.geometry import topology_from_geom
-from smu.geometry import topology_molecule
-from smu.parser import smu_utils_lib
-from smu.parser import smu_writer_lib
+from smu import dataset_pb2, smu_sqlite
+from smu.geometry import bond_length_distribution, topology_from_geom, topology_molecule
+from smu.parser import smu_utils_lib, smu_writer_lib
 
 
 class OutputFormat(enum.Enum):

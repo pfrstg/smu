@@ -30,15 +30,11 @@
 
 import itertools
 
-from absl import app
-from absl import logging
 import numpy as np
+from absl import app, logging
 
-from smu import dataset_pb2
-from smu import smu_sqlite
-from smu.geometry import bond_length_distribution
-from smu.geometry import topology_from_geom
-from smu.geometry import topology_molecule
+from smu import dataset_pb2, smu_sqlite
+from smu.geometry import bond_length_distribution, topology_from_geom, topology_molecule
 from smu.parser import smu_utils_lib
 
 

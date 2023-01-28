@@ -29,11 +29,9 @@
 """Utility functions for SMU."""
 
 import math
-
 from typing import Any, List
 
 import numpy as np
-
 from rdkit import Chem
 
 from smu import dataset_pb2

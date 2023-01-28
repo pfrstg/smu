@@ -27,15 +27,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Topology from Geometry."""
-from absl import app
-from absl import flags
 import apache_beam as beam
+from absl import app, flags
 from apache_beam.options.pipeline_options import PipelineOptions
-from smu.geometry import topology_from_geom
 
 from smu import dataset_pb2
-from smu.geometry import bond_length_distribution
-from smu.geometry import topology_molecule
+from smu.geometry import bond_length_distribution, topology_from_geom, topology_molecule
 
 FLAGS = flags.FLAGS
 

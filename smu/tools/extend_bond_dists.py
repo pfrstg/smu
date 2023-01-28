@@ -31,15 +31,10 @@
 import csv
 import itertools
 
-from absl import app
-from absl import logging
+from absl import app, logging
 
-from smu import dataset_pb2
-
-from smu import smu_sqlite
-from smu.geometry import bond_length_distribution
-from smu.geometry import topology_from_geom
-from smu.geometry import topology_molecule
+from smu import dataset_pb2, smu_sqlite
+from smu.geometry import bond_length_distribution, topology_from_geom, topology_molecule
 
 
 def get_modified_bond_lengths(epsilon):

@@ -35,9 +35,8 @@ import math
 import os
 import re
 
-from absl import app
-from absl import flags
-from absl import logging
+from absl import app, flags, logging
+
 from smu import smu_sqlite
 from smu.parser import smu_writer_lib
 

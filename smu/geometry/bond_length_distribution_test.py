@@ -28,13 +28,11 @@
 # limitations under the License.
 """Tests for the BondLengthDistribution(s) classes."""
 
-import numpy as np
 import os
 
-from absl.testing import absltest
-from absl.testing import parameterized
 import numpy as np
 import pandas as pd
+from absl.testing import absltest, parameterized
 
 from smu import dataset_pb2
 from smu.geometry import bond_length_distribution

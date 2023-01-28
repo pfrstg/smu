@@ -32,11 +32,8 @@ import collections
 
 from absl import app
 
-from smu import dataset_pb2
-
-from smu import smu_sqlite
-from smu.geometry import bond_length_distribution
-from smu.geometry import topology_from_geom
+from smu import dataset_pb2, smu_sqlite
+from smu.geometry import bond_length_distribution, topology_from_geom
 
 
 def main(unused_argv):

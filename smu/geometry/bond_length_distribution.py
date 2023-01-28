@@ -44,10 +44,10 @@ import math
 import os.path
 from typing import Dict, cast
 
-from absl import logging
 import numpy as np
 import pandas as pd
 import scipy.stats
+from absl import logging
 
 from smu import dataset_pb2
 from smu.parser import smu_utils_lib

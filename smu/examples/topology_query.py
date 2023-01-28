@@ -28,8 +28,7 @@
 # limitations under the License.
 """Use the query by topology functionality."""
 
-from smu import dataset_pb2
-from smu import smu_sqlite
+from smu import dataset_pb2, smu_sqlite
 from smu.geometry import bond_length_distribution
 from smu.parser import smu_utils_lib
 

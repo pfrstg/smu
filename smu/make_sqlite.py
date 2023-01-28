@@ -28,16 +28,12 @@
 # limitations under the License.
 """Generate the SQLite DB from TFRecord files."""
 
-from absl import app
-from absl import flags
-from absl import logging
-
 import tensorflow as tf
+from absl import app, flags, logging
 from tensorflow.io import gfile
-from smu import dataset_pb2
-from smu import smu_sqlite
-from smu.geometry import bond_length_distribution
-from smu.geometry import topology_from_geom
+
+from smu import dataset_pb2, smu_sqlite
+from smu.geometry import bond_length_distribution, topology_from_geom
 from smu.parser import smu_utils_lib
 
 flags.DEFINE_string('input_tfrecord', None, 'Glob of tfrecord files to read')

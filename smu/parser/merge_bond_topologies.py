@@ -23,10 +23,7 @@ files, puts them in an easier to parse format, and assigns ids and SMILES.
 import csv
 from typing import Sequence
 
-from absl import app
-from absl import flags
-from absl import logging
-
+from absl import app, flags, logging
 from tensorflow.io import gfile
 
 from smu.parser import smu_utils_lib

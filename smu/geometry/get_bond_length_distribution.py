@@ -29,11 +29,10 @@
 
 """Extracts bond length distributions from existing Molecule protos."""
 
-from absl import app
-from absl import flags
 import apache_beam as beam
-from apache_beam.options.pipeline_options import PipelineOptions
 import bond_lengths
+from absl import app, flags
+from apache_beam.options.pipeline_options import PipelineOptions
 
 from smu import dataset_pb2
 

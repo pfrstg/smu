@@ -29,7 +29,6 @@
 """Extract bond lengths from SMU molecules."""
 
 import apache_beam as beam
-
 import utilities
 
 from smu import dataset_pb2

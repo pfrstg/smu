@@ -28,8 +28,7 @@
 # limitations under the License.
 """Examples showing important features about multiple bond topologies."""
 
-from smu import dataset_pb2
-from smu import smu_sqlite
+from smu import dataset_pb2, smu_sqlite
 from smu.parser import smu_utils_lib
 
 

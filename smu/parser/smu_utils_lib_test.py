@@ -32,17 +32,15 @@ import copy
 import os
 import tempfile
 
-from absl.testing import absltest
-from absl.testing import parameterized
 import numpy as np
+from absl.testing import absltest, parameterized
+from google.protobuf import text_format
 from rdkit import Chem
 from tensorflow.io import gfile
 
-from google.protobuf import text_format
 from smu import dataset_pb2
 from smu.geometry import utilities
-from smu.parser import smu_parser_lib
-from smu.parser import smu_utils_lib
+from smu.parser import smu_parser_lib, smu_utils_lib
 
 MAIN_DAT_FILE = 'x07_sample.dat'
 STAGE1_DAT_FILE = 'x07_stage1.dat'

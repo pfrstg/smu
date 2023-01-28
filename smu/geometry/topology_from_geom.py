@@ -42,16 +42,13 @@
 # limitations under the License.
 """Functions related to discerning the BondTopology from the geometry."""
 import itertools
-
 from typing import Dict, Tuple
 
 import numpy as np
 from rdkit import Chem
 
 from smu import dataset_pb2
-from smu.geometry import bond_length_distribution
-from smu.geometry import topology_molecule
-from smu.geometry import utilities
+from smu.geometry import bond_length_distribution, topology_molecule, utilities
 from smu.parser import smu_utils_lib
 
 # The longest distance considered.

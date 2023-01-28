@@ -32,9 +32,9 @@ import collections
 import csv
 import enum
 import itertools
+
 import numpy as np
-from rdkit import Chem
-from rdkit import Geometry
+from rdkit import Chem, Geometry
 
 from smu import dataset_pb2
 

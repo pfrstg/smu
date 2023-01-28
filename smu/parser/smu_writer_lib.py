@@ -37,8 +37,7 @@ import copy
 import re
 
 from smu import dataset_pb2
-from smu.parser import smu_parser_lib
-from smu.parser import smu_utils_lib
+from smu.parser import smu_parser_lib, smu_utils_lib
 
 
 class DatFormatMismatchError(Exception):

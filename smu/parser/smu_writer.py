@@ -38,12 +38,10 @@ Example:
   --output_file=<path to Basel .dat output file>
 """
 
-from absl import app
-from absl import flags
-from absl import logging
+from absl import app, flags, logging
+from google.protobuf import text_format
 from tensorflow.io import gfile
 
-from google.protobuf import text_format
 from smu import dataset_pb2
 from smu.parser.smu_writer_lib import SmuWriter
 

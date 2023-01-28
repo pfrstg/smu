@@ -30,11 +30,11 @@
 import itertools
 import operator
 
-from absl.testing import absltest
 import numpy as np
+from absl.testing import absltest
+from google.protobuf import text_format
 from parameterized import parameterized
 
-from google.protobuf import text_format
 from smu import dataset_pb2
 from smu.geometry import topology_molecule
 

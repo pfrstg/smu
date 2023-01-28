@@ -53,11 +53,9 @@ produces different SMILES strings.
 import copy
 import itertools
 
-from absl import app
-from absl import flags
-from absl import logging
 import apache_beam as beam
 import numpy as np
+from absl import app, flags, logging
 from rdkit import Chem
 from tensorflow.io import gfile
 

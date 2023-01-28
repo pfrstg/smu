@@ -38,9 +38,9 @@ import enum
 import math
 import re
 import traceback
-from absl import logging
-import numpy as np
 
+import numpy as np
+from absl import logging
 
 from smu import dataset_pb2
 from smu.parser import smu_utils_lib

@@ -43,16 +43,13 @@
 
 # Tester for topology_from_geometry
 
-from absl.testing import absltest
-
 import numpy as np
 import pandas as pd
-
+from absl.testing import absltest
 from google.protobuf import text_format
+
 from smu import dataset_pb2
-from smu.geometry import bond_length_distribution
-from smu.geometry import topology_from_geom
-from smu.geometry import topology_molecule
+from smu.geometry import bond_length_distribution, topology_from_geom, topology_molecule
 from smu.parser import smu_utils_lib
 
 # Only needed so we can alter the default bond matching

@@ -38,13 +38,9 @@ Example:
   --output_file=<path to protobuf output>
 """
 
-from absl import app
-from absl import flags
-from absl import logging
-
-from tensorflow.io import gfile
-
+from absl import app, flags, logging
 from google.protobuf import text_format
+from tensorflow.io import gfile
 
 from smu import dataset_pb2
 from smu.parser import smu_parser_lib

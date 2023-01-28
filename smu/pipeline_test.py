@@ -30,17 +30,14 @@
 
 import os
 
-from absl import logging
-from absl.testing import absltest
-from absl.testing import flagsaver
 import apache_beam as beam
 import pandas as pd
 import tensorflow as tf
+from absl import logging
+from absl.testing import absltest, flagsaver
 from tensorflow.io import gfile
-import tensorflow as tf
 
-from smu import dataset_pb2
-from smu import pipeline
+from smu import dataset_pb2, pipeline
 
 TESTDATA_PATH = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), 'testdata')
