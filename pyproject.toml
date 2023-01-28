@@ -29,6 +29,7 @@ python-snappy = ">=0.6.0"
 rdkit-pypi = ">=2021.3.1.4"
 scipy = ">=1.5.4"
 tensorflow = ">=2.5.0rc3"
+pre-commit = "^3.0.1"
 
 [build-system]
 requires = ["poetry-core"]
