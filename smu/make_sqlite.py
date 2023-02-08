@@ -28,6 +28,8 @@
 # limitations under the License.
 """Generate the SQLite DB from TFRecord files."""
 
+import math
+
 import tensorflow as tf
 from absl import app, flags, logging
 from tensorflow.io import gfile
@@ -601,6 +603,12 @@ def mutate_conformer(encoded_molecule, bond_lengths, smiles_id_dict):
         | dataset_pb2.BondTopology.SOURCE_DDT
         | dataset_pb2.BondTopology.SOURCE_MLCR
         | dataset_pb2.BondTopology.SOURCE_CSD)
+
+  # This one molecule has this one value misreported in the original .dat files
+  # that were trnasferred so we just fix it here.
+  if molecule.mol_id == 795795001:
+    assert math.isclose(molecule.prop.vib_intens.val[19], 557.9)
+    molecule.prop.vib_intens.val[19] = 7111.5
 
   return molecule.SerializeToString()
 
