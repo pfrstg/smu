@@ -1384,17 +1384,15 @@ class CleanTextWriter:
             (17, 'status'),
             (31, f'{errors.status:3d}'),
         ]))
-    # HACK: remove this once I update the DB. Again.
-    fate = smu_utils_lib.determine_fate(molecule)
-    if (fate == dataset_pb2.Properties.FATE_SUCCESS_NEUTRAL_WARNING_SERIOUS or
-        fate == dataset_pb2.Properties.FATE_SUCCESS_ALL_WARNING_SERIOUS):
+    if (errors.fate == dataset_pb2.Properties.FATE_SUCCESS_NEUTRAL_WARNING_SERIOUS or
+        errors.fate == dataset_pb2.Properties.FATE_SUCCESS_ALL_WARNING_SERIOUS):
       warn_level = 'C'
-    elif (fate == dataset_pb2.Properties.FATE_SUCCESS_NEUTRAL_WARNING_MEDIUM_VIB
+    elif (errors.fate == dataset_pb2.Properties.FATE_SUCCESS_NEUTRAL_WARNING_MEDIUM_VIB
           or
-          fate == dataset_pb2.Properties.FATE_SUCCESS_ALL_WARNING_MEDIUM_VIB):
+          errors.fate == dataset_pb2.Properties.FATE_SUCCESS_ALL_WARNING_MEDIUM_VIB):
       warn_level = 'B'
-    elif (fate == dataset_pb2.Properties.FATE_SUCCESS_NEUTRAL_WARNING_LOW or
-          fate == dataset_pb2.Properties.FATE_SUCCESS_ALL_WARNING_LOW):
+    elif (errors.fate == dataset_pb2.Properties.FATE_SUCCESS_NEUTRAL_WARNING_LOW or
+          errors.fate == dataset_pb2.Properties.FATE_SUCCESS_ALL_WARNING_LOW):
       warn_level = 'A'
     else:
       warn_level = '-'
@@ -1407,7 +1405,7 @@ class CleanTextWriter:
     out.append(
         self._fw_line(base_vals + [
             (17, 'fate'),
-            (31, dataset_pb2.Properties.FateCategory.Name(fate)[5:]),
+            (31, dataset_pb2.Properties.FateCategory.Name(errors.fate)[5:]),
         ]))
     out.append(
         self._fw_line(base_vals + [
@@ -1415,6 +1413,11 @@ class CleanTextWriter:
             (31, 'standard' if errors.which_database ==
              dataset_pb2.STANDARD else 'complete'),
         ]))
+
+    if errors.status < 0 or errors.status > 3:
+      # This is a late hack to suppress this output when the status suggests
+      # that this may not be complete.
+      return out
 
     out.append('#\n')
     out.append(
