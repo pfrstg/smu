@@ -584,6 +584,26 @@ bond {
     self.assertEqual('C#[N+]([O-])F', Chem.MolToSmiles(got))
 
 
+class BondTopologySourceStringTest(parameterized.TestCase):
+
+  def test_plain_source(self):
+    bt = dataset_pb2.BondTopology(info=dataset_pb2.BondTopology.SOURCE_STARTING)
+    self.assertEqual("    S", smu_utils_lib.bond_topology_source_string(bt))
+
+  def test_all_empty(self):
+    bt = dataset_pb2.BondTopology()
+    self.assertEqual(".....", smu_utils_lib.bond_topology_source_string(bt))
+
+  def test_all_set(self):
+    bt = dataset_pb2.BondTopology(info=dataset_pb2.BondTopology.SOURCE_STARTING |
+                                  dataset_pb2.BondTopology.SOURCE_DDT |
+                                  dataset_pb2.BondTopology.SOURCE_MLCR |
+                                  dataset_pb2.BondTopology.SOURCE_CSD |
+                                  dataset_pb2.BondTopology.SOURCE_CUSTOM)
+    self.assertEqual("dcmuS", smu_utils_lib.bond_topology_source_string(bt))
+
+
+
 class IterateBondTopologiesTest(parameterized.TestCase):
   # This test covers molecules
   # * old: without source field and with is_starting_topology
@@ -719,6 +739,7 @@ class MoleculeToRDKitMoleculeTest(absltest.TestCase):
   def setUp(self):
     super().setUp()
     self._molecule = get_stage2_molecule()
+    self._molecule.prop.calc.fate = smu_utils_lib.determine_fate(self._molecule)
 
     # We'll make a new initial_geometry which is just the current one with all
     # coordinates multiplied by 1000
@@ -741,12 +762,12 @@ class MoleculeToRDKitMoleculeTest(absltest.TestCase):
     mols = list(smu_utils_lib.molecule_to_rdkit_molecules(self._molecule))
     self.assertLen(mols, 6)  # 2 bond topologies * (1 opt geom + 2 init_geom)
     self.assertEqual([m.GetProp('_Name') for m in mols], [
-        'SMU 618451001, RDKIT COC(=CF)OC, bt 618451(1/2), geom init(1/2)',
-        'SMU 618451001, RDKIT COC(=CF)OC, bt 618451(1/2), geom init(2/2)',
-        'SMU 618451001, RDKIT COC(=CF)OC, bt 618451(1/2), geom opt',
-        'SMU 618451001, RDKIT COC(=CF)OC, bt 99999(2/2), geom init(1/2)',
-        'SMU 618451001, RDKIT COC(=CF)OC, bt 99999(2/2), geom init(2/2)',
-        'SMU 618451001, RDKIT COC(=CF)OC, bt 99999(2/2), geom opt'
+      'x07_c4o2fh7.618451.001 (init (1/2); S: 0; WL: A; bond_topo 1/2: 618451;     S)',
+      'x07_c4o2fh7.618451.001 (init (2/2); S: 0; WL: A; bond_topo 1/2: 618451;     S)',
+      'x07_c4o2fh7.618451.001 (opt; S: 0; WL: A; bond_topo 1/2: 618451;     S)',
+      'x07_c4o2fh7.618451.001 (init (1/2); S: 0; WL: A; bond_topo 2/2: 99999; d....)',
+      'x07_c4o2fh7.618451.001 (init (2/2); S: 0; WL: A; bond_topo 2/2: 99999; d....)',
+      'x07_c4o2fh7.618451.001 (opt; S: 0; WL: A; bond_topo 2/2: 99999; d....)',
     ])
     self.assertEqual(
         '[H]C(F)=C(OC([H])([H])[H])OC([H])([H])[H]',
@@ -764,8 +785,8 @@ class MoleculeToRDKitMoleculeTest(absltest.TestCase):
             which_topologies=smu_utils_lib.WhichTopologies.STARTING))
     self.assertLen(mols, 2)
     self.assertEqual([m.GetProp('_Name') for m in mols], [
-        'SMU 618451001, RDKIT COC(=CF)OC, bt 618451(1/2), geom init(1/2)',
-        'SMU 618451001, RDKIT COC(=CF)OC, bt 618451(1/2), geom init(2/2)',
+      'x07_c4o2fh7.618451.001 (init (1/2); S: 0; WL: A; bond_topo 1/2: 618451;     S)',
+      'x07_c4o2fh7.618451.001 (init (2/2); S: 0; WL: A; bond_topo 1/2: 618451;     S)',
     ])
     # This is just one random atom I picked from the .dat file and converted to
     # angstroms instead of bohr.
@@ -788,8 +809,8 @@ class MoleculeToRDKitMoleculeTest(absltest.TestCase):
             which_topologies=smu_utils_lib.WhichTopologies.STARTING))
     self.assertLen(mols, 1)
     self.assertEqual(
-        mols[0].GetProp('_Name'),
-        'SMU 618451001, RDKIT COC(=CF)OC, bt 618451(1/2), geom opt',
+      mols[0].GetProp('_Name'),
+      'x07_c4o2fh7.618451.001 (opt; S: 0; WL: A; bond_topo 1/2: 618451;     S)'
     )
     self.assertEqual(
         '[H]C(F)=C(OC([H])([H])[H])OC([H])([H])[H]',
@@ -1563,6 +1584,19 @@ class DetermineFateTest(parameterized.TestCase):
     molecule.prop.calc.status = status
     self.assertEqual(expected, smu_utils_lib.determine_fate(molecule))
 
+
+class FateToWarningLeveltest(parameterized.TestCase):
+  @parameterized.parameters(
+    (dataset_pb2.Properties.FATE_SUCCESS_ALL_WARNING_LOW, 'A'),
+    (dataset_pb2.Properties.FATE_SUCCESS_NEUTRAL_WARNING_LOW, 'A'),
+    (dataset_pb2.Properties.FATE_SUCCESS_NEUTRAL_WARNING_MEDIUM_VIB, 'B'),
+    (dataset_pb2.Properties.FATE_SUCCESS_ALL_WARNING_MEDIUM_VIB, 'B'),
+    (dataset_pb2.Properties.FATE_SUCCESS_NEUTRAL_WARNING_SERIOUS, 'C'),
+    (dataset_pb2.Properties.FATE_SUCCESS_ALL_WARNING_SERIOUS, 'C'),
+    (dataset_pb2.Properties.FATE_FAILURE_GEO_OPT, '-'),
+  )
+  def test_all(self, fate, expected):
+    self.assertEqual(expected, smu_utils_lib.fate_to_warning_level(fate))
 
 class ToBondTopologySummaryTest(parameterized.TestCase):
 

@@ -63,7 +63,9 @@ flags.DEFINE_string(
     'output_path', None,
     'Path to output file to write. If not specified, will write to stdout.')
 flags.DEFINE_list('btids', [], 'List of bond topology ids to query')
-flags.DEFINE_list('mids', [], 'List of molecule ids to query')
+flags.DEFINE_list('mids', [],
+                  'List of molecule ids to query. Can be in the form XXXXXX.YYY or XXXXXXYYY')
+flags.DEFINE_string('mids_file', None, 'File containing molecule ids (one per line) to query')
 flags.DEFINE_list('smiles', [], 'List of smiles to query')
 flags.DEFINE_list('stoichiometries', [], 'List of stoichiometries to query')
 flags.DEFINE_string(
@@ -402,6 +404,21 @@ class ReDetectTopologiesOutputter:
     """Closes all resources."""
     self._wrapped_outputter.close()
 
+def create_mid_list():
+  """Create a list of mids to query from flags.
+
+  Process FLAGS.mids_file and FLAGS.mids and handles the form of the id
+  with and without a . in it.
+
+  Returns:
+    list of ints
+  """
+  vals = []
+  if FLAGS.mids_file:
+    with open(FLAGS.mids_file) as f:
+      vals.extend(s.strip() for s in f)
+  vals.extend(FLAGS.mids)
+  return [int(s.replace('.', '')) for s in vals]
 
 def main(argv):
   if len(argv) > 1:
@@ -444,7 +461,7 @@ def main(argv):
     outputter = ReDetectTopologiesOutputter(outputter, db)
 
   with contextlib.closing(outputter):
-    for mid in (int(x) for x in FLAGS.mids):
+    for mid in create_mid_list():
       molecule = db.find_by_mol_id(mid)
       outputter.output(molecule)
 

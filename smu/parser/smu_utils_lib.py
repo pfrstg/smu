@@ -799,6 +799,30 @@ def bond_topology_sorting_key(bond_topology):
               compute_adjacency_matrix(bond_topology), '.'))
 
 
+def bond_topology_source_string(bt):
+  """Returns a compact string for the source of the bond topology.
+
+  This is used in the clean text and SDF output
+
+  Args:
+    bt: dataset_pb2.BondTopology
+
+  Returns:
+    string
+  """
+  if bt.info == dataset_pb2.BondTopology.SOURCE_STARTING:
+    # This indicates topology detection was not performed at all.
+    info = '    S'
+  else:
+    info = (
+      ('d' if bt.info & dataset_pb2.BondTopology.SOURCE_DDT else '.') +
+      ('c' if bt.info & dataset_pb2.BondTopology.SOURCE_CSD else '.') +
+      ('m' if bt.info & dataset_pb2.BondTopology.SOURCE_MLCR else '.') +
+      ('u' if bt.info & dataset_pb2.BondTopology.SOURCE_CUSTOM else '.') +
+      ('S' if bt.info & dataset_pb2.BondTopology.SOURCE_STARTING else '.'))
+
+  return info
+
 # These are lower case so they can be used in a command line argument
 class WhichTopologies(enum.Enum):
   """Enum of topology types."""
@@ -863,16 +887,17 @@ def molecule_to_rdkit_molecules(molecule,
   multiple RDKit molecule objects can be produced
 
   The name of the molcule will be (all on one line)
-  SMU <molid>
-  bt=<bt_id>(<bt_idx>/<bt_count>)
-  geom=[opt|init(<init_idx>/<init_count>)]
+  <long id>
+  ([opt|init(<init_idx>/<init_count>)]
+  bond_topo <bt_idx>/<bt_count>: <bt_id>;
+  <source_string>
   where
-    molid: mol_id
+    long_id: see get_original_label
     bt_id: topo_id
-    bt_idx: index in bond_topo
+    bt_idx: index in bond_topo (1-based)_
     bt_count: size of bond_topo
-    init_idx: index in ini_geo
-    init_count: size of ini_geo
+    init_idx: index in ini_geo (1-based)
+    init_count: size of ini_geo (1-based)
 
   Args:
     molecule: dataset_pb2.Molecule
@@ -885,7 +910,7 @@ def molecule_to_rdkit_molecules(molecule,
   """
   bt_count = len(molecule.bond_topo)
   requested_bond_topo = [
-      (bt, f'{bt.topo_id}({i+1}/{bt_count})')
+      (bt, f'bond_topo {i+1}/{bt_count}: {bt.topo_id}')
       for i, bt in iterate_bond_topologies(molecule, which_topologies)
   ]
 
@@ -897,19 +922,26 @@ def molecule_to_rdkit_molecules(molecule,
     valid_init_geometries = [g for g in molecule.ini_geo if g.atompos]
     init_count = len(valid_init_geometries)
     requested_geometries.extend([
-        (geom, f'init({i}/{init_count})')
-        for i, geom in enumerate(valid_init_geometries, start=1)
+        (geom, f'init ({i+1}/{init_count})')
+        for i, geom in enumerate(valid_init_geometries)
     ])
   if include_optimized_geometry and molecule.opt_geo.atompos:
     requested_geometries.append((molecule.opt_geo, 'opt'))
+
+  errors_str = ''
+  if molecule.prop.HasField('calc'):
+    warn_level = fate_to_warning_level(molecule.prop.calc.fate)
+    errors_str = f'S: {molecule.prop.calc.status}; WL: {warn_level}; '
 
   for bt, bt_label in requested_bond_topo:
     for geom, geom_label in requested_geometries:
 
       mol = bond_topology_to_rdkit_molecule(bt)
+      long_id = get_original_label(molecule)
+      source = bond_topology_source_string(bt)
       mol.SetProp(
           '_Name',
-          f'SMU {molecule.mol_id}, RDKIT {bt.smiles}, bt {bt_label}, geom {geom_label}'
+          f'{long_id} ({geom_label}; {errors_str}{bt_label}; {source})'
       )
 
       # Add in the coordinates
@@ -1759,6 +1791,31 @@ def determine_fate(molecule):
 
   else:
     raise ValueError(f'Got an unknown source {source}')
+
+
+def fate_to_warning_level(fate):
+  """Compute a simple string warning level for fate.
+
+  This is a further simplification of fate that is used in some outputs.
+
+  Args:
+    fate: dataset_pb2.FateCategory
+
+  Returns:
+    string
+  """
+  if (fate == dataset_pb2.Properties.FATE_SUCCESS_NEUTRAL_WARNING_SERIOUS or
+      fate == dataset_pb2.Properties.FATE_SUCCESS_ALL_WARNING_SERIOUS):
+    return 'C'
+  elif (fate == dataset_pb2.Properties.FATE_SUCCESS_NEUTRAL_WARNING_MEDIUM_VIB
+        or
+        fate == dataset_pb2.Properties.FATE_SUCCESS_ALL_WARNING_MEDIUM_VIB):
+    return 'B'
+  elif (fate == dataset_pb2.Properties.FATE_SUCCESS_NEUTRAL_WARNING_LOW or
+        fate == dataset_pb2.Properties.FATE_SUCCESS_ALL_WARNING_LOW):
+    return 'A'
+  else:
+    return '-'
 
 
 def get_starting_bond_topology_index(molecule):

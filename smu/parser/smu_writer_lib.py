@@ -1384,23 +1384,10 @@ class CleanTextWriter:
             (17, 'status'),
             (31, f'{errors.status:3d}'),
         ]))
-    if (errors.fate == dataset_pb2.Properties.FATE_SUCCESS_NEUTRAL_WARNING_SERIOUS or
-        errors.fate == dataset_pb2.Properties.FATE_SUCCESS_ALL_WARNING_SERIOUS):
-      warn_level = 'C'
-    elif (errors.fate == dataset_pb2.Properties.FATE_SUCCESS_NEUTRAL_WARNING_MEDIUM_VIB
-          or
-          errors.fate == dataset_pb2.Properties.FATE_SUCCESS_ALL_WARNING_MEDIUM_VIB):
-      warn_level = 'B'
-    elif (errors.fate == dataset_pb2.Properties.FATE_SUCCESS_NEUTRAL_WARNING_LOW or
-          errors.fate == dataset_pb2.Properties.FATE_SUCCESS_ALL_WARNING_LOW):
-      warn_level = 'A'
-    else:
-      warn_level = '-'
-
     out.append(
         self._fw_line(base_vals + [
             (17, 'warn_level'),
-            (33, warn_level),
+            (33, smu_utils_lib.fate_to_warning_level(errors.fate)),
         ]))
     out.append(
         self._fw_line(base_vals + [
@@ -1529,17 +1516,7 @@ class CleanTextWriter:
       out.append(
           self._fw_line(base_vals +
                         [(17, 'topo_id'), (31, f'{bt.topo_id:<d}')]))
-      if bt.info == dataset_pb2.BondTopology.SOURCE_STARTING:
-        # This indicates topology detection was not performed at all.
-        info = '    S'
-      else:
-        info = (
-            ('d' if bt.info & dataset_pb2.BondTopology.SOURCE_DDT else '.') +
-            ('c' if bt.info & dataset_pb2.BondTopology.SOURCE_CSD else '.') +
-            ('m' if bt.info & dataset_pb2.BondTopology.SOURCE_MLCR else '.') +
-            ('u' if bt.info & dataset_pb2.BondTopology.SOURCE_CUSTOM else '.') +
-            ('S' if bt.info
-             & dataset_pb2.BondTopology.SOURCE_STARTING else '.'))
+      info = smu_utils_lib.bond_topology_source_string(bt)
       out.append(self._fw_line(base_vals + [(17, 'info'), (31, info)]))
       out.append(
           self._fw_line(base_vals + [(17, 'smiles_rdkit'), (31, bt.smiles)]))
