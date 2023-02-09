@@ -19,6 +19,10 @@ Specifies the sqlite file to read (either the complete or standard), e.g.
 
 ## Output
 
+TODO: Update output_format
+
+TODO: add mids_file
+
 * `--output_format`
 There are a variety of different output formats
     * `pbtxt`: Human and machine readable test format that directly corresponds to the dataset.proto
