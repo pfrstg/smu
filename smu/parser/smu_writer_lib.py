@@ -34,6 +34,7 @@ format.
 
 import array
 import copy
+import functools
 import re
 
 from smu import dataset_pb2
@@ -1080,11 +1081,17 @@ class Atomic2InputWriter:
       topo_idx:
     """
     if topo_idx is not None:
-      return '{}.{}.{:03d}.inp'.format(
+      return '{}.{}.at2_{:02d}.inp'.format(
           smu_utils_lib.get_composition(molecule.bond_topo[topo_idx]),
-          get_long_mol_id(molecule.mol_id), topo_idx)
+          get_long_mol_id(molecule.mol_id), topo_idx + 1)
     else:
       return '{}.inp'.format(get_long_molecule_name(molecule))
+
+  @staticmethod
+  def _bond_sorting_key(bond_topo, bond):
+    has_h = (bond_topo.atom[bond.atom_a] == dataset_pb2.BondTopology.ATOM_H or
+             bond_topo.atom[bond.atom_b] == dataset_pb2.BondTopology.ATOM_H)
+    return (has_h, bond.atom_a, bond.atom_b)
 
   def get_mol_block(self, molecule, topo_idx):
     """Returns the MOL file block with atoms and bonds.
@@ -1110,7 +1117,10 @@ class Atomic2InputWriter:
               smu_utils_lib.bohr_to_angstroms(coords.y),
               smu_utils_lib.bohr_to_angstroms(coords.z),
               smu_utils_lib.ATOM_TYPE_TO_RDKIT[atom_type][0]))
-    for bond in molecule.bond_topo[topo_idx].bond:
+    for bond in sorted(molecule.bond_topo[topo_idx].bond,
+                       key=functools.partial(
+                         Atomic2InputWriter._bond_sorting_key,
+                         molecule.bond_topo[topo_idx])):
       contents.append('{:3d}{:3d}{:3d}  0\n'.format(bond.atom_a + 1,
                                                     bond.atom_b + 1,
                                                     bond.bond_type))
@@ -1132,28 +1142,26 @@ class Atomic2InputWriter:
                     'CCSD         CCSD(T)        T1 diag\n')
 
     def format_field(field_name):
-      return '{:15.7f}'.format(getattr(molecule.prop, field_name).val)
+      return '{:15.6f}'.format(getattr(molecule.prop, field_name).val)
 
-    contents.append('{:7s}'.format('3') + format_field('spe_std_hf_3') +
+    contents.append('{:6s}'.format('3') + format_field('spe_std_hf_3') +
                     format_field('spe_std_mp2_3') + '\n')
-    contents.append('{:7s}'.format('4') + format_field('spe_std_hf_4') +
+    contents.append('{:6s}'.format('4') + format_field('spe_std_hf_4') +
                     format_field('spe_std_mp2_4') + '\n')
-    contents.append('{:7s}'.format('2sp') + format_field('spe_std_hf_2sp') +
+    contents.append('{:6s}'.format('2sp') + format_field('spe_std_hf_2sp') +
                     format_field('spe_std_mp2_2sp') +
                     format_field('spe_std_ccsd_2sp') +
                     format_field('spe_std_ccsd_t_2sp') + '\n')
-    contents.append('{:7s}'.format('2sd') + format_field('spe_std_hf_2sd') +
+    contents.append('{:6s}'.format('2sd') + format_field('spe_std_hf_2sd') +
                     format_field('spe_std_mp2_2sd') +
                     format_field('spe_std_ccsd_2sd') +
                     format_field('spe_std_ccsd_t_2sd') +
-                    format_field('wf_diag_t1_2sd') + '\n')
-    contents.append('{:7s}'.format('3Psd') + format_field('spe_std_hf_3psd') +
+                    '{:13.4}'.format(molecule.prop.wf_diag_t1_2sd.val) + '\n')
+    contents.append('{:6s}'.format('3Psd') + format_field('spe_std_hf_3psd') +
                     format_field('spe_std_mp2_3psd') +
                     format_field('spe_std_ccsd_3psd') + '\n')
-    contents.append('{:7s}'.format('C3') + format_field('spe_std_hf_cvtz') +
+    contents.append('{:6s}'.format('C3') + format_field('spe_std_hf_cvtz') +
                     format_field('spe_std_mp2full_cvtz') + '\n')
-    contents.append('{:7s}'.format('(34)') + format_field('spe_std_hf_34') +
-                    format_field('spe_std_mp2_34') + '\n')
 
     return contents
 
@@ -1201,11 +1209,16 @@ class Atomic2InputWriter:
       )
 
     contents = []
-    contents.append('SMU {}, RDKIT {}, bt {}({}/{}), geom opt\n'.format(
-        molecule.mol_id, molecule.bond_topo[topo_idx].smiles,
-        molecule.bond_topo[topo_idx].topo_id, topo_idx + 1,
-        len(molecule.bond_topo)))
-    contents.append(smu_utils_lib.get_original_label(molecule) + '\n')
+    bt = molecule.bond_topo[topo_idx]
+    status = molecule.prop.calc.status
+    warn_level = smu_utils_lib.fate_to_warning_level(molecule.prop.calc.fate)
+    long_id = smu_utils_lib.get_original_label(molecule)
+    source_string = smu_utils_lib.bond_topology_source_string(bt)
+    contents.append(
+      f'{long_id} (opt; S: {status}; WL: {warn_level}; '
+      f'bond_topo {topo_idx + 1}/{len(molecule.bond_topo)}: {bt.topo_id}; '
+      f'{source_string})\n')
+    contents.append(bt.smiles + '\n')
 
     contents.extend(self.get_mol_block(molecule, topo_idx))
     contents.extend(self.get_energies(molecule))

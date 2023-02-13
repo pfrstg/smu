@@ -229,6 +229,7 @@ def process_one_expected(samples_fn, db, is_standard):
   logging.info('Processing %s is_standard=%s',
                samples_fn, 'True' if is_standard else 'False')
   writer = smu_writer_lib.CleanTextWriter()
+  at2_writer = smu_writer_lib.Atomic2InputWriter()
   result = MatchResult(0, 0, 0, 0)
 
   file_keyword = 'standard' if is_standard else 'complete'
@@ -265,6 +266,22 @@ def process_one_expected(samples_fn, db, is_standard):
       for line in diff_lines:
         diff = True
         diff_file.write(line)
+
+      # We don't actually diff this here, but write the files to be done elsewhere
+      if not is_standard:
+        at2_output_dir = os.path.join(this_output_dir, 'smu_db_complete.at2')
+        os.makedirs(at2_output_dir, exist_ok=True)
+        for bond_topo_idx in range(len(mol.bond_topo)):
+          at2_fn = at2_writer.get_filename_for_atomic2_input(mol, bond_topo_idx)
+          try:
+            at2_output = at2_writer.process(mol, bond_topo_idx)
+            with open(os.path.join(at2_output_dir, at2_fn), 'w') as at2_file:
+              at2_file.write(at2_output)
+          except ValueError:
+            # If the complete entry doesn't have the right info, silently move on
+            pass
+
+
       if is_standard:
         result.cnt_standard += 1
         if diff:
