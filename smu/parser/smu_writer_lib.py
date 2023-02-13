@@ -1156,7 +1156,7 @@ class Atomic2InputWriter:
                     format_field('spe_std_mp2_2sd') +
                     format_field('spe_std_ccsd_2sd') +
                     format_field('spe_std_ccsd_t_2sd') +
-                    '{:13.4}'.format(molecule.prop.wf_diag_t1_2sd.val) + '\n')
+                    '{:13.4f}'.format(molecule.prop.wf_diag_t1_2sd.val) + '\n')
     contents.append('{:6s}'.format('3Psd') + format_field('spe_std_hf_3psd') +
                     format_field('spe_std_mp2_3psd') +
                     format_field('spe_std_ccsd_3psd') + '\n')
