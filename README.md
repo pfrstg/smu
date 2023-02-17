@@ -18,20 +18,31 @@ This is probably the process you want. even if you are writing new python code
 using the SMU library, you can use this method. It is *only* if you need to modify
 the code in the SMU library itself that you need to use the developer mode below
 
+1) Check that you have a compatible version of python
+      ```
+      python3 --version
+      ```
+   Should give you a version >=3.8.
+   If not, you need to upgrade.
+
 1) Go to directory where you want to do the install
 
 1) Create a python virtual environment
       ```
-      python -m venv smu_venv
+      python3 -m venv smu_venv
       ```
 
 1) Activate the virtual environment
       ```
       source smu_venv/bin/activate
+      # Ensure that commands below refer to the virtual enviroment
+      rehash
       ```
 
 1) Install the SMU code.
       ```
+      # Ensure pip is latest version
+      python -m pip install --upgrade pip
       python -m pip install "smu @ git+https://github.com/pfrstg/smu"
       ```
 
