@@ -42,14 +42,14 @@ the code in the SMU library itself that you need to use the developer mode below
 1) Install the SMU code.
       ```
       # Ensure pip is latest version
-      python -m pip install --upgrade pip
-      python -m pip install "smu @ git+https://github.com/pfrstg/smu"
+      python3 -m pip install --upgrade pip
+      python3 -m pip install "smu @ git+https://github.com/pfrstg/smu"
       ```
 
 1) Test your installation
       ```
       cd <path where you downloaded the SMU sqlite files>
-      python -m smu.query_sqlite --input_sqlite 20220621_standard_v4.sqlite --smiles NN
+      python3 -m smu.query_sqlite --input_sqlite 20220621_standard_v4.sqlite --smiles NN
       ```
 
 TODO: Probably change this to use PyPi later on.
