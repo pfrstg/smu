@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "smu"
-version = "0.1.0"
+version = "0.1.1"
 description = "Code for accessing the Small Molecule Universe, a scientific dataset"
 authors = ["Patrick Riley <patriley@gmail.com>"]
 readme = "README.md"
