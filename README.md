@@ -22,7 +22,7 @@ the code in the SMU library itself that you need to use the developer mode below
       ```
       python3 --version
       ```
-   Should give you a version >=3.8.
+   Should give you a version >=3.6.1.
    If not, you need to upgrade.
 
 1) Go to directory where you want to do the install
@@ -43,7 +43,9 @@ the code in the SMU library itself that you need to use the developer mode below
       ```
       # Ensure pip is latest version
       python3 -m pip install --upgrade pip
-      python3 -m pip install "smu @ git+https://github.com/pfrstg/smu"
+      # Note that for now we are using test pypi. We'll release to the regular PyPi
+      # for final release
+      python3 -m pip install --extra-index-url https://test.pypi.org/simple/ smu
       ```
 
 1) Test your installation
@@ -52,7 +54,7 @@ the code in the SMU library itself that you need to use the developer mode below
       python3 -m smu.query_sqlite --input_sqlite 20220621_standard_v4.sqlite --smiles NN
       ```
 
-TODO: Probably change this to use PyPi later on.
+TODO: Change to the normal PyPi
 
 
 
